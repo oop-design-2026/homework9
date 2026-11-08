@@ -1,0 +1,47 @@
+=== Problem 1: Downcasting ===
+[Part 1] Upcasting: Base Class Pointer
+Knight Arthur (HP:100, SwordLv:3)
+Wizard Merlin (HP:80, Mana:150)
+[Part 2] Correct Downcasting (static_cast)
+Knight Arthur charges 2 times with sword (Lv.3)!
+Wizard Merlin unleashes a spell consuming 150 mana!
+[Part 3] Wrong Downcasting: Undefined Behavior Risk
+[Wrong] static_cast<Wizard*>(p1) returned non-null — static_cast has no type check!
+[!!] Calling wrong->castUltimate() would be Undefined Behavior!
+[Safe] dynamic_cast<Wizard*>(p1) returned nullptr
+=== Problem 2: RTTI & dynamic_cast ===
+[Part 1] typeid + dynamic_cast (pointer)
+--- party[0] ---
+[typeid] Type: Knight
+[dynamic_cast] Knight*: SUCCESS
+Knight Arthur challenges you to a duel!
+[dynamic_cast] Wizard*: FAILED (nullptr)
+--- party[1] ---
+[typeid] Type: Wizard
+[dynamic_cast] Knight*: FAILED (nullptr)
+[dynamic_cast] Wizard*: SUCCESS
+Wizard Merlin reveals the secrets of the arcane!
+[Part 2] dynamic_cast (reference) + bad_cast
+--- party[0] ---
+[ref cast] Knight&: SUCCESS
+Knight Arthur challenges you to a duel!
+[ref cast] Wizard&: bad_cast caught
+--- party[1] ---
+[ref cast] Knight&: bad_cast caught
+[ref cast] Wizard&: SUCCESS
+Wizard Merlin reveals the secrets of the arcane!
+=== Problem 3: Type Confusion ===
+[Part 1] analyzeConfusion: static_cast vs dynamic_cast
+--- p1 (Warrior) ---
+[static_cast] Warrior*: non-null (type not checked)
+[static_cast] Mage*: non-null (type not checked)
+[dynamic_cast] Warrior*: SUCCESS
+[dynamic_cast] Mage*: nullptr
+--- p2 (Mage) ---
+[static_cast] Warrior*: non-null (type not checked)
+[static_cast] Mage*: non-null (type not checked)
+[dynamic_cast] Warrior*: nullptr
+[dynamic_cast] Mage*: SUCCESS
+[Part 2] safeDispatch: dynamic_cast in action
+Warrior Tristan slashes the enemy for 25 damage!
+Mage Morgana chants a spell with 180 mana!

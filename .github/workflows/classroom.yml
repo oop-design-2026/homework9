@@ -1,0 +1,63 @@
+name: GitHub Classroom Workflow
+
+on: [push]
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile and run test cases
+        run: |
+          g++ main.cpp problem1.cpp problem2.cpp problem3.cpp \
+            -o hw9_main -std=c++17 -fsanitize=address -g
+          for j in 1 2 3; do
+            ./hw9_main Test/case${j}.txt > Test/output${j}.txt
+          done
+
+      - name: Problem 1
+        id: prob1
+        uses: education/autograding-command-grader@v1
+        with:
+          test-name: Problem 1
+          setup-command: ''
+          command: bash Test/check.sh 1
+          timeout: 10
+          max-score: 34
+
+      - name: Problem 2
+        id: prob2
+        uses: education/autograding-command-grader@v1
+        with:
+          test-name: Problem 2
+          setup-command: ''
+          command: bash Test/check.sh 2
+          timeout: 10
+          max-score: 33
+
+      - name: Problem 3
+        id: prob3
+        uses: education/autograding-command-grader@v1
+        with:
+          test-name: Problem 3
+          setup-command: ''
+          command: bash Test/check.sh 3
+          timeout: 10
+          max-score: 33
+
+      - name: Autograding Reporter
+        uses: education/autograding-grading-reporter@v1
+        env:
+          PROB1_RESULTS: "${{steps.prob1.outputs.result}}"
+          PROB2_RESULTS: "${{steps.prob2.outputs.result}}"
+          PROB3_RESULTS: "${{steps.prob3.outputs.result}}"
+        with:
+          runners: prob1,prob2,prob3
